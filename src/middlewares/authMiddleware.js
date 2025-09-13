@@ -39,6 +39,9 @@ async function checkOTP(req, res, next) {
 
     try {
         const otp = req.body.otp;
+        if (!otp) {
+            res.json({ message: "Empty OTP" });
+        }
         const signUpToken = req.query.token;
         // get otp and token from the url and find the user in temp db
         const result = await tempServices.findinTemp(signUpToken, otp);
@@ -46,7 +49,7 @@ async function checkOTP(req, res, next) {
         next();
     } catch (error) {
         console.log("error in checkOTP middleware- " + error);
-        res.json({ error: "Error in checkOTP middleware" })
+        res.json({ message: "Invalid OTP" })
     }
 }
 
