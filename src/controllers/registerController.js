@@ -19,7 +19,7 @@ const signup = async (req, res) => {
 
         await sendOtp(req.body.email, otp);
 
-        res.json({ message: "OTP sent", redirectUrl: `http://localhost:3000/app/api/auth/email-register/otp-verification/otp-verification?token=${signUpToken}` })
+        res.json({ message: "OTP sent", redirectUrl: `${process.env.BACKEND_BASE_Url}/auth/email-register/otp-verification?token=${signUpToken}` })
 
     } catch (error) {
         console.log("error in register controller- " + error);
