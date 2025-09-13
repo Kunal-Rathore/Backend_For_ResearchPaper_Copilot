@@ -1,6 +1,6 @@
 
 
-function runPipeline(query) {
+async function runPipeline(query) {
 
     // call all agents
 
