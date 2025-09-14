@@ -13,12 +13,17 @@ const query = async (req, res) => {
         const query = req.body.query;
 
         // agent call 
-        const agentAnswer = agentCoordinator.runPipeline(query);
+        const agentAnswer = await agentCoordinator.runPipeline(query);
+
 
         //store in db
         const result = await chatService.storeQueryAndAnswer(userId, query, agentAnswer);
         // return _id of new query for pdf generation frontend could send back
-        return res.json({ messge: agentAnswer });
+
+        return res.json({
+            message: agentAnswer,
+            urlToExport: `http://localhost:3000/app/api/export/${result._id}`
+        });
 
     } catch (error) {
         console.log("Error in chat controller- " + error);

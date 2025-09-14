@@ -9,7 +9,9 @@ async function checkConverstationExists(req, res, next) {
         const userId = req.userId;
         const queryId = req.params.queryId;
 
+
         req.result = await findConversation(userId, queryId);
+
         next();
     } catch (err) {
         console.log("Error in checkConverstationId middleware- ", err);

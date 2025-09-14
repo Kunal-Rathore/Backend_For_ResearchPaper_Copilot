@@ -1,16 +1,17 @@
 // library
-const OpenAI = require('openai');
+const OpenAI = require("openai");
 
-// rawHtml-Util
+//file
 const returnRawHtml = require("../utils/rawHtml");
 
-
 const client = new OpenAI({
-  apiKey: process.env.API_OPENAI,
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPEN_ROUTER_API
 });
 
 async function generateHtml(conversation) {
   const { query, answer, papers, summary, validation } = conversation;
+
 
   const prompt = `
             You are an "HTML Agent". Format the following research assistant data into a visually appealing HTML page.
@@ -26,7 +27,7 @@ async function generateHtml(conversation) {
                 - For Validation: if "Is Valid" is true → green text, if false → red text.
                 - Use readable font-family and appropriate font sizes.
                 - Optional: subtle background color or border for sections for modern look.
-            - Make the format modern and visually appealing, vary layout, colors, or font sizes slightly each time.
+            - Make the format modern and visually appealing, vary layout, or font sizes slightly each time.
             - Return ONLY HTML (no explanations).
 
             Query: ${query}
@@ -38,28 +39,28 @@ async function generateHtml(conversation) {
 
 
   try {
-    // req to agent
-    const response = await client.responses.create({
-      model: 'gpt-4o-mini',
-      input: [
-        {
-          role: 'user',
-          content: [{ type: 'input_text', text: prompt }], // messges is an array cause gpt thinks message can have multiple in one request therefore
-        },
-      ],
-    });
 
-    if (!response.output_text) {
-      throw Error("No output_text");
+    const completions = await client.chat.completions.create({
+      model: "openrouter/sonoma-sky-alpha",
+      messages: [
+        {
+          role: "user",
+          content: [{ type: "text", text: prompt }]
+        }
+      ]
+    });
+    const html = await completions.choices[0].message.content;
+    if (!html) {
+      throw new Error("No response from the html agent");
     }
-    return response.output_text;
+    return html;
 
   } catch (error) {
-
-    console.log("error in htmlAgent- " + error);
+    console.log("Error in html agent- " + error);
     return returnRawHtml(query, answer, papers, summary, validation);
-
   }
+
 }
+
 
 module.exports = generateHtml;

@@ -2,7 +2,7 @@
 
 function returnRawHtml(query, answer, papers, summary, validation) {
 
-    return `
+  return `
 <section>
   <h1>Query</h1>
   <p>${query}</p>
@@ -23,7 +23,7 @@ function returnRawHtml(query, answer, papers, summary, validation) {
       <p><strong>Paper ID:</strong> ${p.paperId}</p>
     </article>
     `).join("")
-        }
+    }
 </section>
 
 <section>

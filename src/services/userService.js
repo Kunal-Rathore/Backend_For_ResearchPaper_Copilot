@@ -1,4 +1,5 @@
-
+//lib
+const bcrypt = require("bcrypt");
 
 //files
 const usersModel = require("../models/UserModel");
@@ -17,11 +18,11 @@ async function isUserFoundFunction(email) {
 
 // storeUser
 async function storeUserByEmail(data) {
-    const { username, hashedPass, email } = data;
+    const { username, password, email } = data;
 
     await usersModel.create({
         username: username,
-        password: hashedPass,
+        password: password,
         email: email,
         authBy: "email",
     });
