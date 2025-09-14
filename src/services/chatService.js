@@ -10,7 +10,6 @@ const conversationsModel = require("../models/ConversationModel");
 async function storeQueryAndAnswer(userId, query, agentAnswer) {
 
     const { answer, papers, summary, validation } = agentAnswer;
-
     const result = await conversationsModel.create({
         userId: userId,
         query: query,

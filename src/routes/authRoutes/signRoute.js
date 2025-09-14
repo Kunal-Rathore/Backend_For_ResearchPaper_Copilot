@@ -7,7 +7,7 @@ const express = require("express");
 const authMiddlewares = require("../../middlewares/authMiddleware");
 
 //controllers
-const signControllers = require("../../controllers/signController");
+const signControllers = require("../../controllers/signIn_Controller");
 
 
 

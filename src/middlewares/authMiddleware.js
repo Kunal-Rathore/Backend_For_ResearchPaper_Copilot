@@ -14,7 +14,7 @@ function tokenValidation(req, res, next) {  //need to use this middlware for eve
 
     const token = req.headers.token; //will change for the cookie later
     if (!token) {
-        res.json({ message: "No token exists" });
+        res.json({ message: "No user-token exists" });
     }
     else {
         // decode token and check is tokenValid
@@ -46,6 +46,7 @@ async function checkOTP(req, res, next) {
         // get otp and token from the url and find the user in temp db
         const result = await tempServices.findinTemp(signUpToken, otp);
         req.data = result;
+        console.log(req.data);
         next();
     } catch (error) {
         console.log("error in checkOTP middleware- " + error);
