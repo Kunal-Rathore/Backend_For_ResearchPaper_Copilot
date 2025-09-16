@@ -58,7 +58,7 @@ async function summaryAgent(searchAgentAns, query) {
         const output = await rawData.choices[0].message.content;
 
 
-        console.log("summaryAgent executed- " + output);
+        console.log("summaryAgent executed ");
 
         return output;
     } catch (error) {
