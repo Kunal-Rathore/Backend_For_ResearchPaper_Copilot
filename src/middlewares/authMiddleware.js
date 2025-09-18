@@ -12,7 +12,7 @@ const signSchema = require("../validators/authValidation");
 // token validation 
 function tokenValidation(req, res, next) {  //need to use this middlware for every req after the user login
 
-    const token = req.headers.token; //will change for the cookie later
+    const token = req.cookies.token; //will change for the cookie later
     if (!token) {
         res.json({ message: "No user-token exists" });
     }

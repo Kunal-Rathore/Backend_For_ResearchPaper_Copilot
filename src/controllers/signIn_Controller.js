@@ -13,7 +13,8 @@ const signin = async (req, res) => {
 
         // jwt generation
         const token = createToken(userId);
-        res.json({ message: "Sign-in successfull", token: token });  // need to change for cookies later
+        res.cookie("token", token);
+        res.json({ message: "Sign-in successfull" });
 
         // after signIn redirect to the home from fronted not here
 
