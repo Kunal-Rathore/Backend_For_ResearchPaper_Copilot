@@ -12,6 +12,16 @@ const chatController = require("../controllers/chatController");
 
 const chat = express.Router();
 
+
+chat.post("/", tokenValidation, (req, res) => {
+    res.send("hi from initial route of query");
+})
+
+
+
+
+
+
 chat.post("/query", tokenValidation, chatMiddlwares.zodQuery, chatController.query);
 chat.get("/fetch-all-chat", tokenValidation, chatController.fetch);
 
