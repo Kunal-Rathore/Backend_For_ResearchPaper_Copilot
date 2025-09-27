@@ -69,7 +69,7 @@ Return only the JSON. Do not include any extra commentary or explanation.
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    model: "openrouter/sonoma-sky-alpha",
+                    model: "openrouter/auto",
                     messages: [
                         {
                             role: "user",

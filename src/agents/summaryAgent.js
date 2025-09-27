@@ -41,7 +41,7 @@ async function summaryAgent(searchAgentAns, query) {
                     "Content-Type": `application/json`
                 },
                 body: JSON.stringify({
-                    model: "openrouter/sonoma-sky-alpha",
+                    model: "openrouter/auto",
                     messages: [
                         {
                             role: "user",
@@ -52,6 +52,7 @@ async function summaryAgent(searchAgentAns, query) {
             });
 
         const rawData = await response.json();
+        console.log(rawData);
 
         if (!rawData) { throw new Error("No response from summary agent") }
 
