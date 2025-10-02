@@ -1,5 +1,5 @@
 //db functions
-const tempServices = require("../services/tempServices");
+const OTPServices = require("../services/OTPServices");
 
 // utils
 const { decodeToken } = require("../utils/jwt");
@@ -44,7 +44,7 @@ async function checkOTP(req, res, next) {
         }
         const signUpToken = req.query.token;
         // get otp and token from the url and find the user in temp db
-        const result = await tempServices.findinTemp(signUpToken, otp);
+        const result = await OTPServices.findinOTPModel(signUpToken, otp);
         req.data = result;
         console.log(req.data);
         next();

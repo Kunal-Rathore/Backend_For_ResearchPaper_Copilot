@@ -10,7 +10,9 @@ async function runPipeline(query) {
     const searchAgentAns = await searchAgent(query);
     const summaryAgentAns = await summaryAgent(searchAgentAns, query);
     console.log(summaryAgentAns);
+
     const validationAgentAns = await validationAgent(summaryAgentAns, query);
+
 
     return JSON.parse(validationAgentAns);
 }

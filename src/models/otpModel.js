@@ -2,9 +2,9 @@
 
 const mongoose = require("mongoose");
 
-const temp = new mongoose.Schema({
-    signUpToken: { type: String, required: true },
-    email: { type: String, unique: true, required: true },
+const OTP = new mongoose.Schema({
+    signUpToken: { type: String, required: true, unique: true },
+    email: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String, required: true },
     otp: { type: String },
@@ -15,6 +15,6 @@ const temp = new mongoose.Schema({
 }, { timestamps: true });
 
 
-const tempModel = mongoose.model("tempModel", temp);
+const otpModel = mongoose.model("OTPModel", OTP);
 
-module.exports = tempModel 
+module.exports = otpModel 

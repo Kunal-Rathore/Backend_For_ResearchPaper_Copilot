@@ -4,8 +4,6 @@ require("dotenv").config();
 
 const cors = require("cors");
 
-
-
 const app = require("./app");
 app.use(cors({
     origin: "*",
