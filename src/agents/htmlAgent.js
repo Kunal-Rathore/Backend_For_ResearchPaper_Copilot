@@ -1,16 +1,11 @@
-// library
-const OpenAI = require("openai");
 
-//file
+const API_KEY = process.env.GEMINI_API;
+
 const returnRawHtml = require("../utils/rawHtml");
 
-const client = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPEN_ROUTER_API
-});
-
 async function generateHtml(conversation) {
-  const { query, answer, papers, summary, validation } = conversation;
+  const { query, answer } = conversation;
+  const { papers, summary, validation } = conversation.papers[0];
 
 
   const prompt = `
@@ -28,6 +23,7 @@ async function generateHtml(conversation) {
                 - Use readable font-family and appropriate font sizes.
                 - Optional: subtle background color or border for sections for modern look.
             - Make the format modern and visually appealing, vary layout, or font sizes slightly each time.
+            - *Make it well looking, there are no division of paragraph on two pages on the A4 size page like half was on bottom of page1 and half was on top of page2, ignore such things keep it will formated*
             - Return ONLY HTML (no explanations).
 
             Query: ${query}
@@ -40,16 +36,26 @@ async function generateHtml(conversation) {
 
   try {
 
-    const completions = await client.chat.completions.create({
-      model: "openrouter/sonoma-sky-alpha",
-      messages: [
-        {
-          role: "user",
-          content: [{ type: "text", text: prompt }]
-        }
-      ]
-    });
-    const html = await completions.choices[0].message.content;
+
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+      {
+        headers: {
+          "x-goog-api-key": `${API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: prompt }]
+          }]
+        })
+      }
+    )
+    const rawHtml = await response.json();
+    console.log(JSON.stringify(rawHtml));
+    const html = rawHtml.candidates[0].content.parts[0].text;
+    console.log(JSON.stringify(html));
+
     if (!html) {
       throw new Error("No response from the html agent");
     }

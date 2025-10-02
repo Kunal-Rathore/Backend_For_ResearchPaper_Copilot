@@ -1,7 +1,7 @@
 
 
 //db function
-const { findConversation } = require("../services/chatService");
+const { findConversation } = require("../services/conversationService");
 
 async function checkConverstationExists(req, res, next) {
 
@@ -14,7 +14,7 @@ async function checkConverstationExists(req, res, next) {
 
         next();
     } catch (err) {
-        console.log("Error in checkConverstationId middleware- ", err);
+        console.log("Error in checkConverstationId middleware exportMiddleware- ", err);
         return res.json({ err: "Converstaion not found" }); // even if the query id is invalid
     }
 

@@ -6,9 +6,13 @@ function validateWithZod(schema, data) {
 
 function handleZod(res, result, next) {
     if (!result.success) {
-        const errors = result.error.flatten(); // format the errors of zod
-        console.log(" zod error " + JSON.stringify(errors));
-        return res.json({ message: errors });
+
+        const error = result.error.issues[0].message;
+        throw {
+            type: "ValidationError",
+            message: error,
+            status: 400
+        }
     }
     return next();
 }

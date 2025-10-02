@@ -1,6 +1,6 @@
 
 
-const API_KEY = process.env.OPEN_ROUTER_API;;
+const API_KEY = process.env.GEMINI_API;;
 
 async function validationAgent(summaryAgentAns, query) {
 
@@ -9,82 +9,95 @@ async function validationAgent(summaryAgentAns, query) {
 
 
     const prompt = `
-You are a Validation Agent. Your task is to validate the AI-generated summary and papers for the following query:
+You are a Validation Agent designed to provide a structured JSON output.
 
-Query: """${query}"""
+Your task is to validate the AI-generated summary and associated papers based on the given query.
 
-Summary Agent Output: """${summaryAgentAns}"""
+**Query**: """${query}"""
 
-**Requirements for MongoDB compatibility**:
-1. Top-level fields **must always include**:
-   - "answer" (string, required)
-   - "summary" (string, required)
-2. Papers must be an array of objects, each with:
-   - "paperId" (string, required)
-   - "title" (string, required)
-   - "authors" (array of strings, required, at least one author)
-   - "url" (string, required; if unknown, use "not provided")
-3. Validation object must include:
-   - "isValid" (boolean, required)
-   - "score" (number, required, 0 to 1)
-   - "feedback" (string; optional)
-   - "citations" (array of paperIds, required)
+**Summary Agent Output**: """${summaryAgentAns}"""
 
-**Instructions**:
-- Ensure **answer** is a concise AI-powered summary of the query.
-- Ensure **summary** reflects all papers’ key points.
-- Fill missing paper URLs with "not provided".
-- Validate consistency between answer, summary, and papers.
-- Output the final JSON strictly in the following format:
+**Validation Requirements**:
+1.  **Top-level fields MUST include**:
+    *   "answer" (string, required, **non-empty**): A concise AI-powered summary of the query.
+    *   "summary" (string, required, **non-empty**): A comprehensive summary reflecting the key points of ALL provided papers.
+2.  **"papers" field MUST be an array of objects**:
+    *   Each object MUST have:
+        *   "paperId" (string, required, **non-empty**)
+        *   "title" (string, required, **non-empty**)
+        *   "authors" (array of strings, required, with at least one author, **non-empty strings**)
+        *   "url" (string, required; if the URL is unknown or missing, use "not provided", **non-empty**)
+3.  **"validation" field MUST be an object**:
+    *   It MUST have:
+        *   "isValid" (boolean, required): True if the answer, summary, and papers are consistent and meet all requirements, otherwise false.
+        *   "score" (number, required): A confidence score from 0.0 to 1.0, indicating how well the output aligns with the query and requirements.
+        *   "feedback" (string, optional): Any specific comments or areas for improvement.
+        *   "citations" (array of paperIds, required): A list of paperIds that were directly referenced or contributed to the "answer" and "summary".
 
+**Instructions for Output**:
+*   Generate the complete JSON object directly.
+*   **DO NOT include any markdown code blocks (e.g., \`\`\`json\`)**.
+*   **DO NOT include any extra commentary, explanations, or conversational text before or after the JSON**.
+*   Ensure all strings are properly quoted and escape any internal quotes if necessary.
+*   The final output MUST be a parseable JSON object.
+*   **Crucially, ensure all required string fields (answer, summary, paperId, title, authors[i], url) are populated with meaningful, non-empty values. If information is truly unavailable for a paper's URL, use "not provided".**
+* Give me a lot of necessary data and specially answer and summary having atleast 2-3 pages in for pdf parsing.
+
+  
+**Example of Desired Output Format (Schema)**:
 {
-    "answer": "string",
+    "answer": "string_answer_here",
     "papers": [
         {
-            "paperId": "string",
-            "title": "string",
-            "authors": ["string"],
-            "url": "string"
+            "paperId": "string_paper_id_1",
+            "title": "string_title_1",
+            "authors": ["string_author_1a", "string_author_1b"],
+            "url": "string_url_1_or_not_provided"
+        },
+        {
+            "paperId": "string_paper_id_2",
+            "title": "string_title_2",
+            "authors": ["string_author_2a"],
+            "url": "string_url_2_or_not_provided"
         }
     ],
-    "summary": "string",
+    "summary": "string_overall_summary_here",
     "validation": {
         "isValid": true,
-        "score": 0.0,
-        "feedback": "string",
-        "citations": ["paperId"]
+        "score": 0.95,
+        "feedback": "All requirements met. Clear and well-cited.",
+        "citations": ["string_paper_id_1", "string_paper_id_2"]
     }
 }
 
-Return only the JSON. Do not include any extra commentary or explanation.
+Return ONLY the JSON object.
 `;
 
 
     try {
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions",
+        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
             {
-                method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${API_KEY} `,
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": `${API_KEY} `,
                 },
+                method: "POST",
                 body: JSON.stringify({
-                    model: "openrouter/auto",
-                    messages: [
+                    contents: [
                         {
-                            role: "user",
-                            content: [{ type: "text", text: prompt }]
+                            parts: [{ text: prompt }]
                         }
                     ]
                 })
             });
 
         const output = await response.json();
+        console.log("Output from vlaidation agent is- " + JSON.stringify(output));
 
         if (!output) {
             throw new Error("no reponse from validation agent");
         }
-        const validationAgentAns = output.choices[0].message.content;
+        const validationAgentAns = output.candidates[0].content.parts[0].text;
 
 
         console.log("validationAgent executed");

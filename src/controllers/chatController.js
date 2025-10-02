@@ -1,6 +1,7 @@
 
 // db functions
-const chatService = require("../services/chatService");
+const conversationsModel = require("../services/conversationService");
+const papersModel = require("../services/paperService");
 
 // agentCoordinator
 const agentCoordinator = require("../agents/coordinatorAgent");
@@ -13,20 +14,28 @@ const query = async (req, res) => {
         const query = req.body.query;
 
         // agent call 
-        const agentAnswer = await agentCoordinator.runPipeline(query);
+        //    const agentAnswer = await agentCoordinator.runPipeline(query);
 
+        //  const { answer, papers, summary, validation } = agentAnswer;w
 
+        const answer = 'a';
         //store in db
-        const result = await chatService.storeQueryAndAnswer(userId, query, agentAnswer);
+        const respondFromStoringinConversationModel = await conversationsModel.storeQueryAndAnswer(userId, query, answer);
         // return _id of new query for pdf generation frontend could send back
 
+        const queryId = respondFromStoringinConversationModel._id;
+
+        // storing papers and validation
+        //   await papersModel.storeInPaperModel(queryId, papers, summary, validation);
+
+
         return res.json({
-            message: agentAnswer,
-            urlToExport: `http://localhost:3000/app/api/export/${result._id}`
+            message: answer,
+            urlToExport: `http://localhost:3000/app/api/export/${queryId}`
         });
 
     } catch (error) {
-        console.log("Error in chat controller- " + error);
+        console.log("\n\n\n\nError in chat controller- " + error);
         return res.json({ error: error })
     }
 
@@ -42,7 +51,7 @@ const query = async (req, res) => {
 
 const fetch = async (req, res) => {
     try {
-        const result = await chatService.getQueries(req.userId);
+        const result = await conversationsModel.getQueries(req.userId);
         res.json({ result });
 
     } catch (error) {

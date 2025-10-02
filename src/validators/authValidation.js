@@ -2,7 +2,8 @@ const { z } = require('zod');
 
 const signSchema = z.object({
   email: z.string().email(),
-
+  username: z.string()
+    .min(5, 'Username must contain atleast 5 characters'),
   password: z
     .string()
     .min(5, 'Password must have atleast 5 characters')

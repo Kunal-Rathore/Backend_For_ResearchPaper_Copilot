@@ -1,7 +1,7 @@
 
 // db functions
 const userService = require("../services/userService");
-const tempService = require("../services/tempServices");
+const OTPServices = require("../services/OTPServices");
 
 //utils
 const otpAndTokenGenerator = require("../utils/otpAndTokenGenerator");
@@ -10,37 +10,27 @@ const sendOtp = require("../utils/otpMailer");
 //register
 const signup = async (req, res) => {
 
-    try {
-        const signUpToken = otpAndTokenGenerator.generateSignUpToken();
+    const signUpToken = otpAndTokenGenerator.generateSignUpToken();
 
-        const otp = otpAndTokenGenerator.generateOtp();
+    const otp = otpAndTokenGenerator.generateOtp();
 
-        await tempService.storeInTemp(req.body, signUpToken, otp)  // later change with cache
+    await OTPServices.storeInOTPModel(req.body, signUpToken, otp)  // later change with cache
 
-        await sendOtp(req.body.email, otp);
+    await sendOtp(req.body.email, otp);
 
-        res.json({ message: "OTP sent", redirectUrl: `${process.env.BACKEND_BASE_Url}/auth/email-register/otp-verification?token=${signUpToken}` })
-
-    } catch (error) {
-        console.log("error in register controller- " + error);
-        res.json({ result: error.message });
-    }
+    res.json({ message: "OTP sent", redirectUrl: `${process.env.BACKEND_BASE_Url}/auth/email-register/otp-verification?token=${signUpToken}` });
 
 }
 
-//checkEmail
 
+//checkEmail 
 const checkEmail = async (req, res) => {
-    try {
-        const result = await userService.findEmail(req.body);
-        if (!result) {
-            return res.status(200).send("email not exists");// need to remove send with true false 
-        }
-        return res.status(400).send("email exists exists");// need to remove send with true false 
-
-    } catch (err) {
-
+    const result = await userService.findEmail(req.body);
+    if (!result) {
+        return res.status(200).send("email not exists");// need to remove send with true false 
     }
+    return res.status(400).send("email already exists");// need to remove send with true false 
+
 }
 
 // register

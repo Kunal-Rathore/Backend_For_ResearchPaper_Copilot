@@ -1,5 +1,5 @@
 
-const API_KEY = process.env.OPEN_ROUTER_API;
+const API_KEY = process.env.GEMINI_API;
 
 async function summaryAgent(searchAgentAns, query) {
 
@@ -28,38 +28,38 @@ async function summaryAgent(searchAgentAns, query) {
             2. Key Findings:
             3. Important Limitations:
             4. Links:
+        7. Give me lot of necessary data specially summary.    
 
         Papers: ${dataInString}
         `
 
     try {
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions",
+        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
             {
-                method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${API_KEY}`,
-                    "Content-Type": `application/json`
+                    "Content-Type": `application/json`,
+                    "X-goog-api-key": `${API_KEY}`,
                 },
+                method: "POST",
                 body: JSON.stringify({
-                    model: "openrouter/auto",
-                    messages: [
+                    contents: [
                         {
-                            role: "user",
-                            content: [{ type: "text", text: prompt }]
+                            parts: [
+                                { "text": prompt }
+                            ]
                         }
                     ]
                 })
             });
 
         const rawData = await response.json();
-        console.log(rawData);
 
         if (!rawData) { throw new Error("No response from summary agent") }
 
-        const output = await rawData.choices[0].message.content;
+        const output = await rawData.candidates[0].content.parts[0].text;
 
 
-        console.log("summaryAgent executed ");
+        console.log("summaryAgent executed");
 
         return output;
     } catch (error) {

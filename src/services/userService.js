@@ -54,8 +54,8 @@ async function isUserExists(data) {
 
 async function findEmail(data) {
     const email = data.email;
-    const result = await isUserFoundFunction(email);
-    return result;
+    return await isUserFoundFunction(email);
+    // if there any error it directly throws where the function get called (at at  registercontroller_checkEmail)
 }
 
 module.exports = { storeUserByEmail, isUserExists, findEmail };

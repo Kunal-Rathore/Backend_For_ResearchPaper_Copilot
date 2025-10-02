@@ -9,7 +9,7 @@ const users = new mongoose.Schema({
     authBy: { type: String, enum: ["Google", "email"], required: true },
     avatarUrl: { type: String, default: null },
 
-}, { timestamps: true });
+});
 
 
 const usersModel = mongoose.model("usersModel", users);
