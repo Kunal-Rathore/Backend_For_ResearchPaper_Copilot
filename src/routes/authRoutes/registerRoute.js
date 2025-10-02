@@ -21,6 +21,6 @@ app.post("/", authMiddlewares.zodSign, asyncWrapper(registerControllers.signup))
 // email checking debounce route
 app.post("/check-email", asyncWrapper(registerControllers.checkEmail));
 
-app.post("/otp-verification", authMiddlewares.checkOTP, registerControllers.register);
+app.post("/otp-verification", authMiddlewares.checkOTP, asyncWrapper(registerControllers.register));
 
 module.exports = app;

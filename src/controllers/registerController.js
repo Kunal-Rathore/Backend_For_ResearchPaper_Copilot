@@ -37,17 +37,8 @@ const checkEmail = async (req, res) => {
 
 const register = async (req, res) => {
 
-    try {
-        await userService.storeUserByEmail(req.data); // if any db error catch will execute, "like userAlready Exists"
-        res.json({ message: "Sign-up Successfull" }); // frontend need to redirect to /signin
-    }
-    catch (error) {
-        console.log("error in register called- " + error);
-        res.json({ error: error.message })
-        // next(e await UsersModerror); // express own middleware
-    }
-
-
+    await userService.storeUserByEmail(req.data); // if any db error throw it like userAlready Exists 
+    res.json({ message: "Sign-up Successfull" }); // frontend need to redirect to /signin
 }
 
 module.exports = { signup, checkEmail, register }

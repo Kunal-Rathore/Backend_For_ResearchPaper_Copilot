@@ -37,21 +37,15 @@ function zodSign(req, res, next) {
 
 async function checkOTP(req, res, next) {
 
-    try {
-        const otp = req.body.otp;
-        if (!otp) {
-            res.json({ message: "Empty OTP" });
-        }
-        const signUpToken = req.query.token;
-        // get otp and token from the url and find the user in temp db
-        const result = await OTPServices.findinOTPModel(signUpToken, otp);
-        req.data = result;
-        console.log(req.data);
-        next();
-    } catch (error) {
-        console.log("error in checkOTP middleware- " + error);
-        res.json({ message: "Invalid OTP" })
+    const otp = req.body.otp;
+    if (!otp) {
+        res.json({ message: "Empty OTP" });
     }
+    const signUpToken = req.query.token;
+    // get otp and token from the url and find the user in temp db
+    const result = await OTPServices.findinOTPModel(signUpToken, otp); // if otp is wrong throw error which will be caught by global error middleware
+    req.data = result;
+    next();
 }
 
 module.exports = { tokenValidation, zodSign, checkOTP };
