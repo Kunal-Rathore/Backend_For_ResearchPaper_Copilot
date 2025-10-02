@@ -19,7 +19,13 @@ async function storeInOTPModel(data, signUpToken, otp) {
 async function findinOTPModel(signUpToken, otp) {
 
     const result = await OTPModel.findOne({ signUpToken, otp });
-    if (!result) { throw new Error("Data not found might invalid signUptoken or data expires"); }
+    if (!result) {
+        throw {
+            message: "Invalid OTP",
+            type: "Unauthorized",
+            status: 401,
+        }
+    }
     else { return result; }
 
 }
