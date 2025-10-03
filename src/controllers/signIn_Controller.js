@@ -8,22 +8,15 @@ const { createToken } = require("../utils/jwt");
 
 //signIn
 const signin = async (req, res) => {
-    try {
-        const userId = await userService.isUserExists(req.body);
 
-        // jwt generation
-        const token = createToken(userId);
-        res.cookie("token", token);
-        res.json({ message: "Sign-in successfull" });
+    const userId = await userService.isUserExists(req.body);
 
-        // after signIn redirect to the home from fronted not here
+    // jwt generation
+    const token = createToken(userId);
+    res.cookie("token", token);
+    res.json({ message: "Sign-in successfull" });
 
-
-    } catch (error) {
-        console.log("error called- " + error);
-        res.json({ message: error.message });
-        // next(error); // express own middleware (will change later)
-    }
+    // after signIn redirect to the home from fronted not here
 }
 
 const respondTokenExists = (req, res) => {

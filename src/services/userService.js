@@ -4,16 +4,11 @@ const bcrypt = require("bcrypt");
 //files
 const usersModel = require("../models/UserModel");
 
-//function using in both time while signup and during checking email
+//function using in both time while signup for debounce and during checking email
 async function isUserFoundFunction(email) {
 
-    try {
-        return await usersModel.findOne({
-            email: email
-        });
-    } catch (err) {
-        return err.message;
-    }
+
+    return await usersModel.findOne({ email: email });
 }
 
 // storeUser
@@ -36,18 +31,22 @@ async function isUserExists(data) {
     if (isUserFound) {
         const checkPassword = await bcrypt.compare(password, isUserFound.password);
         if (!checkPassword) {
-            const error = new Error("Password Invalid");
-            error.type = "Password";
-            throw error;
+            throw {
+                message: 'Incorrect Password',
+                type: "Unauthorized",
+                status: 401
+            }
         }
         else {
             return isUserFound.id; // if user exists sends the _id as string for jwt token
         }
     }
     else {
-        const error = new Error("User not found");
-        error.type = "Email";
-        throw error;
+        throw {
+            message: 'User not found',
+            type: "Unauthorized",
+            status: 401
+        }
     }
 }
 
