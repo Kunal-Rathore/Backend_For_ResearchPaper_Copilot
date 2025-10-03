@@ -5,20 +5,22 @@ const express = require("express");
 
 // middlewares
 const authMiddlewares = require("../../middlewares/authMiddleware");
+const asyncWrapper = require("../../utils/catchAsync");
+
 
 //controllers
 const signControllers = require("../../controllers/signIn_Controller");
 
 
 
-const app = express();
+const signin = express();
 
 
-app.post("/", authMiddlewares.zodSign, signControllers.signin)
+signin.post("/", authMiddlewares.zodSign, asyncWrapper(signControllers.signin))
 
 
-app.post("/check-token", authMiddlewares.tokenValidation, signControllers.respondTokenExists)
+signin.post("/check-token", authMiddlewares.tokenValidation, signControllers.respondTokenExists)
 
 
 
-module.exports = app;
+module.exports = signin;

@@ -6,6 +6,7 @@ const express = require("express");
 // middlewares
 const { tokenValidation } = require("../middlewares/authMiddleware");
 const chatMiddlwares = require("../middlewares/chatMiddleware");
+const asyncWrapper = require("../utils/catchAsync");
 
 // controllers
 const chatController = require("../controllers/chatController");
@@ -18,12 +19,8 @@ chat.post("/", tokenValidation, (req, res) => {
 })
 
 
-
-
-
-
-chat.post("/query", tokenValidation, chatMiddlwares.zodQuery, chatController.query);
-chat.get("/fetch-all-chat", tokenValidation, chatController.fetch);
+chat.post("/query", tokenValidation, chatMiddlwares.zodQuery, asyncWrapper(chatController.query));
+chat.get("/fetch-all-chat", tokenValidation, asyncWrapper(chatController.fetch));
 
 
 module.exports = chat;

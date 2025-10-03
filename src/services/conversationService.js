@@ -28,6 +28,14 @@ async function getQueries(userId) {
 async function findConversation(userId, queryId) {
 
 
+    if (!mongoose.Types.ObjectId.isValid(queryId)) {
+        throw {
+            type: "Invalid",
+            status: 400,
+            message: "Invalid query"
+        }
+    }
+
     const result = await conversationsModel.aggregate([
         {
             $match: {
@@ -45,11 +53,13 @@ async function findConversation(userId, queryId) {
         }
     ]);
     if (!result.length) {
-        throw new Error("Conversation not found");
+        throw {
+            type: 'Not found',
+            status: 404,
+            message: "Conversation not found"
+        }
     }
     return result[0];
-
-
 }
 
 

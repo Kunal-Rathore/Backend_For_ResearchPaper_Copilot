@@ -12,11 +12,14 @@ async function searchAgent(query) {
 
         if (!response.ok) {
             // call gpt model for finding papers or may be in catch
-            throw new Error("No response from arxiv");
+            throw {
+                type: "FROM ARXiV AGENT",
+                status: 404,
+                message: "ARXIV FAILED"
+            };
         }
         const xmlData = await response.text();
         const jsonData = await parseStringPromise(xmlData);
-
 
         const searchAgentAns = jsonData.feed.entry.map(e => ({
             title: e.title[0],
